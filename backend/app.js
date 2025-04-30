@@ -3,7 +3,7 @@ const cors = require('cors');
 const app = express();
 
 // Brug CORS middleware
-app.use(cors());
+app.use(express.json({ limit: '10mb' }));
 
 // Middleware til at håndtere JSON
 app.use(express.json());
@@ -22,6 +22,7 @@ let cars = [
 
 // GET route for at hente alle biler
 carRouter.get('/', (req, res) => {
+    console.log(cars);
     res.json(cars);
 });
 

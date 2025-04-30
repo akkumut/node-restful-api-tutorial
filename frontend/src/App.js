@@ -22,9 +22,20 @@ const App = () => {
       });
   }, []);  // Tomt array sikrer, at det kun kører én gang ved første render
 
+  // Håndter tilføjelse af bil til indkøbskurv
   const handleAddToCart = (car) => { 
-    setCart([...cart, car]); // Tilføj bil til indkøbskurven
-  }
+    const updatedCart = [...cart];
+    const existingCarIndex = updatedCart.findIndex(item => item.id === car.id);
+    
+    if (existingCarIndex === -1) {
+      updatedCart.push(car);  // Tilføj bil til kurven, hvis den ikke findes
+    } else {
+      // Hvis bilen allerede er i kurven, kan du opdatere antal eller bare ignorere
+      alert("This car is already in your cart!");
+    }
+
+    setCart(updatedCart);
+  };
 
   // Hvis dataene stadig hentes, vis en loading besked
   if (loading) {
@@ -36,6 +47,9 @@ const App = () => {
     return <div>Error: {error.message}</div>;
   }
 
+  // Beregn samlet pris i indkøbskurv
+  const totalPrice = cart.reduce((total, car) => total + car.price, 0);
+
   return (
     <div>
       <h1>Cars Webshop</h1>
@@ -46,12 +60,23 @@ const App = () => {
       </div>
 
       <h2>Shopping Cart</h2>
-      <ul>
-        {cart.map((car, index) => (
-          <li key={car.id}>{car.name} - {car.model} - Price: {car.price}</li>
-        ))}
-      </ul>
-      <button onClick={() => alert('Proceeding to checkout')}>Checkout</button>
+      {cart.length > 0 ? (
+        <div>
+          <ul>
+            {cart.map((car, index) => (
+              <li key={car.id}>
+                Name: {car.name} - Model: {car.model} - Price: {car.price}
+              </li>
+            ))}
+          </ul>
+          <div>
+            <h3>Total: {totalPrice} DKK</h3>
+            <button onClick={() => alert('Proceeding to checkout')}>Checkout</button>
+          </div>
+        </div>
+      ) : (
+        <p>Your cart is empty.</p>
+      )}
     </div>
   );
 };
